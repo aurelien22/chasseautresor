@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
+      - name: Set up JAVA
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '15'
           distribution: 'adopt'
       - name: Compile code
         run: mvn compile
@@ -25,10 +25,10 @@ jobs:
     needs: compile
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
+      - name: Set up JAVA
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '15'
           distribution: 'adopt'
       - name: Running tests
         run: mvn test
@@ -38,10 +38,25 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
+      - name: Set up JAVA
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '15'
           distribution: 'adopt'
       - name: Run mvn build
         run: mvn -B package --file pom.xml -Dmaven.test.skip=true
+
+  sonar:
+    name: SonarCloud scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JAVA
+        uses: actions/setup-java@v2
+        with:
+          java-version: '15'
+          distribution: 'adopt'
+      - name: SonarCloud Scan
+        run: mvn -B clean verify -Psonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
