@@ -1,0 +1,21 @@
+name: Docker deploy on AWS ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push-on-aws-ecr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker://ghcr.io/kciter/aws-ecr-action:latest
+        with:
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: docker/repo
+          region: eu-west-3
+          tags: latest,${{ github.sha }}
+          create_repo: true
