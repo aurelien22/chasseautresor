@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://ghcr.io/kciter/aws-ecr-action:latest
-        with:
-          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-          repo: chasseautresor
-          region: eu-west-3
-          create_repo: true
+
+      - name: Login to ECR
+        run: aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 587222088192.dkr.ecr.eu-west-3.amazonaws.com
+      - name: Create the Docker image
+        run: docker build -t chasseautresor .
+      - name: Tag the image
+        run: docker tag chasseautresor:latest 587222088192.dkr.ecr.eu-west-3.amazonaws.com/chasseautresor:latest
+      - name: Push the image to ECR
+        run: docker push 587222088192.dkr.ecr.eu-west-3.amazonaws.com/chasseautresor:latest
