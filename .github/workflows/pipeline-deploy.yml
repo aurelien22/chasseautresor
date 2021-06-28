@@ -6,21 +6,9 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JAVA
-        uses: actions/setup-java@v2
-        with:
-          java-version: '15'
-          distribution: 'adopt'
-      - name: Run mvn build
-        run: mvn -B package --file pom.xml -Dmaven.test.skip=true
         
   build-and-push-on-aws-ecr:
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - uses: actions/checkout@v2
       
@@ -32,6 +20,8 @@ jobs:
           aws-region: eu-west-3
       - name: Login to ECR
         run: aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 587222088192.dkr.ecr.eu-west-3.amazonaws.com
+      - name: Build with Maven
+        run: mvn package
       - name: Create the Docker image
         run: docker build -t chasseautresor .
       - name: Tag the image
