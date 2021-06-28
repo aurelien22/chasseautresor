@@ -17,5 +17,4 @@ jobs:
           account_id: ${{ secrets.AWS_ACCOUNT_ID }}
           repo: chasseautresor
           region: eu-west-3
-          tags: latest,${{ github.sha }}
           create_repo: true
